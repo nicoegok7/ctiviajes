@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Generador de Voucher CTI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #1b7ced;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #voucher-preview {
+      position: relative;
+      width: 1280px;
+      height: 768px;
+      background-image: url('vouchers.png');
+      background-size: cover;
+      margin-top: 20px;
+    }
+    .field {
+      position: absolute;
+      font-size: 14px;
+      color: black;
+    }
+    #passenger { top: 20px; left: 130px; }
+    #people { top: 40px; left: 130px; }
+    #voucher { top: 60px; left: 130px; }
+    #provider { top: 20px; left: 800px; }
+    #reference { top: 40px; left: 800px; }
+    #contact { top: 60px; left: 800px; }
+    #details { top: 200px; left: 30px; width: 1200px; }
+  </style>
+</head>
+<body>
+  <h1>Generador de Voucher CTI</h1>
+  <form id="voucher-form">
+    <label>Pasajero</label>
+    <input type="text" id="input-passenger">
+    <label>Cantidad</label>
+    <input type="text" id="input-people">
+    <label>Número de Voucher</label>
+    <input type="text" id="input-voucher">
+    <label>Proveedor</label>
+    <input type="text" id="input-provider">
+    <label>Número de Referencia</label>
+    <input type="text" id="input-reference">
+    <label>Contacto Asistencia</label>
+    <input type="text" id="input-contact">
+    <label>Texto Detalles (instrucciones, vuelo, horarios, etc)</label>
+    <textarea id="input-details" rows="6"></textarea>
+    <button type="button" onclick="generarVoucher()">Generar Voucher</button>
+    <button type="button" onclick="descargarPDF()">Descargar PDF</button>
+  </form>
+
+  <div id="voucher-preview">
+    <div class="field" id="passenger"></div>
+    <div class="field" id="people"></div>
+    <div class="field" id="voucher"></div>
+    <div class="field" id="provider"></div>
+    <div class="field" id="reference"></div>
+    <div class="field" id="contact"></div>
+    <div class="field" id="details" style="white-space: pre-wrap;"></div>
+  </div>
+
+  <script src="html2canvas.min.js"></script>
+  <script src="jspdf.umd.min.js"></script>
+  <script>
+    function generarVoucher() {
+      document.getElementById('passenger').innerText = document.getElementById('input-passenger').value;
+      document.getElementById('people').innerText = document.getElementById('input-people').value;
+      document.getElementById('voucher').innerText = document.getElementById('input-voucher').value;
+      document.getElementById('provider').innerText = document.getElementById('input-provider').value;
+      document.getElementById('reference').innerText = document.getElementById('input-reference').value;
+      document.getElementById('contact').innerText = document.getElementById('input-contact').value;
+      document.getElementById('details').innerText = document.getElementById('input-details').value;
+    }
+
+    async function descargarPDF() {
+      const { jsPDF } = window.jspdf;
+      const voucher = document.getElementById("voucher-preview");
+      const canvas = await html2canvas(voucher);
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF('l', 'px', [1280, 768]);
+      pdf.addImage(imgData, 'PNG', 0, 0, 1280, 768);
+      pdf.save("voucher-cti.pdf");
+    }
+  </script>
+</body>
+</html>
